@@ -3,6 +3,6 @@ window.env = {
   keycloak: {
     url: 'http://localhost:8080/',
     realm: 'crmxmd',
-    client: 'crm-ui'
+    clientId: 'crm-ui'
   }
 };

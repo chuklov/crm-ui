@@ -1,19 +1,21 @@
-import { createApi, fetchBaseQuery, BaseQueryFn, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
+// apiSlice.ts
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../app/store';
 import { setCredentials } from './authSlice';
 
 
 // @ts-ignore
-const baseURL = window.env?.baseURL
+const baseurl = window.env?.baseURL
 
 
 // Base query function with optional Keycloak support
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: baseurl,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token; // Ensure RootState is correctly defined
+    const token = (getState() as RootState).auth.token;
     if (token) {
+        console.log("Attaching token to headers:", token);
       headers.set('Authorization', `Bearer ${token}`);
     }
     return headers;
@@ -30,7 +32,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
       api.dispatch(setCredentials({ ...refreshResult.data, user }));
       result = await baseQuery(args, api, extraOptions);
     } else {
-//       api.dispatch(logOut());
+       api.dispatch(setCredentials(''));
     }
   }
 
@@ -42,7 +44,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
               api.dispatch(setCredentials({ ...refreshResult.data, user }));
               result = await baseQuery(args, api, extraOptions);
           } else {
-//               api.dispatch(logOut());
+              api.dispatch(setCredentials(''));
           }
       }
 

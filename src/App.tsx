@@ -15,9 +15,10 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
   const appReady = useSelector(selectAppReady);
 
-  useEffect(() => {
-    dispatch(initialize());
-  }, [dispatch]);
+    useEffect(() => {
+        dispatch(initialize());
+    }, [dispatch]);
+
 
   if (!appReady) {
     return <div>Loading...</div>;
