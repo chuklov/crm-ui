@@ -9,15 +9,23 @@ import Settings from './pages/Settings';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import './App.css';
-import { initialize, selectAppReady } from './pages/authSlice';
+import { initialize, selectAppReady } from './api/authSlice';
+import {useLazyUserInfoQuery} from "./api/authApiSlice";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const appReady = useSelector(selectAppReady);
+  const [ userTrigger, userResults ] = useLazyUserInfoQuery({});
 
     useEffect(() => {
         dispatch(initialize());
     }, [dispatch]);
+
+useEffect(() => {
+        if (appReady) {
+            userTrigger({});
+        }
+    }, [appReady]);
 
 
   if (!appReady) {

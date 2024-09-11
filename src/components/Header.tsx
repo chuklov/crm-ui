@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentToken } from '../pages/authSlice';
+import { selectCurrentToken } from '../api/authSlice';
 import { MapUser } from './User';
 
 const Header: React.FC = () => {

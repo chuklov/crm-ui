@@ -10,15 +10,11 @@ const authSlice = createSlice({
         appReady: false
     },
     reducers: {
-        initialize: state => {
-
-        },
+        initialize: state => {},
         setCredentials: (state, action) => {
-            console.log("Setting credentials with token:", action.payload);
             state.token = action.payload;
         },
         setKeycloak: (state, action) => {
-            console.log("Setting Keycloak instance:", action.payload);
             state.keycloak = action.payload;
             state.useKeycloak = true;
         },
@@ -38,7 +34,7 @@ export const {
 export default authSlice.reducer;
 
 // TODO: type with global state.
-export const selectCurrentToken = (state: any) => state.auth.token;
+export const selectCurrentToken = (state: any) => state.auth.token
 export const selectKeycloak = (state: any) => state.auth.keycloak;
 export const selectUseKeycloak = (state: any) => state.auth.useKeycloak;
 export const selectAppReady = (state: any) => state.auth.appReady;
@@ -56,50 +52,25 @@ loginListenerMiddleware.startListening({
     actionCreator: initialize,
     effect: async  (action, listenerApi) => {
         // @ts-ignore
-        const keycloakConfig = window.env.keycloak;
-
-        if (keycloakConfig) {
+        if (window.env.keycloak) {
             const keycloak = new Keycloak({
-                url: keycloakConfig.url,
-                realm: keycloakConfig.realm,
-                clientId: keycloakConfig.clientId
+                // @ts-ignore
+                url: window.env.keycloak.url,
+                // @ts-ignore
+                realm: window.env.keycloak.realm,
+                // @ts-ignore
+                clientId: window.env.keycloak.clientId
             });
-//         try {
-            const authenticated = await keycloak.init({}).then((value) => {
-            console.log("await value: " , value);
-            console.log("set keycloak:" , keycloak);
-
-                console.log("Token:", keycloak.token);
+            const authenticated = await keycloak.init({});
+            if (authenticated) {
                 listenerApi.dispatch(setKeycloak(keycloak));
                 listenerApi.dispatch(setCredentials(keycloak.token));
-
-                if (!value) {
-                    keycloak.login();
-                    }
-
-//                 setInterval(() => {
-//                     keycloak.updateToken(30) // minValidity is 30 seconds
-//                         .then(refreshed => {
-//                             if (refreshed) {
-//                                 console.log('Token was refreshed.');
-//                             } else {
-//                                 console.log('Token is still valid.');
-//                             }
-//                         }).catch(error => {
-//                         console.error('Failed to refresh token', error);
-//
-//                     });
-//                 }, 10000);
-            }).catch (Error);
-
-//              else {
-//                 console.log('User is not authenticated, redirecting to login.');
-//                 keycloak.login();
-//             }
-
-
+            } else {
+                keycloak.login();
+            }
+        }
         listenerApi.dispatch(setAppReady(true));
-    }}
+    }
 })
 
 export { loginListenerMiddleware };

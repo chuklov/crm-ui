@@ -1,5 +1,5 @@
 import React from 'react';
-import { apiSlice } from './apiSlice';
+import { apiSlice } from '../api/apiSlice';
 
 // Define a Client interface based on the JSON response
 interface Client {

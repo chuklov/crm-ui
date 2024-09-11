@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { apiSlice } from './apiSlice';
+import { apiSlice } from '../api/apiSlice';
 
 interface Supplement {
   id: number;
