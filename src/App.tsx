@@ -9,23 +9,30 @@ import Settings from './pages/Settings';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import './App.css';
-import { initialize, selectAppReady } from './api/authSlice';
+import { initialize, selectAppReady, selectCurrentToken } from './api/authSlice';
 import {useLazyUserInfoQuery} from "./api/authApiSlice";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const appReady = useSelector(selectAppReady);
-  const [ userTrigger, userResults ] = useLazyUserInfoQuery({});
+  const token = useSelector(selectCurrentToken);
+  const [userTrigger, { data: userData, isLoading: userLoading, isError: userError }] = useLazyUserInfoQuery();
+
 
     useEffect(() => {
         dispatch(initialize());
     }, [dispatch]);
 
-useEffect(() => {
-        if (appReady) {
-            userTrigger({});
-        }
-    }, [appReady]);
+//     useEffect(() => {
+//         if (appReady && token) {
+//             console.log('USER TRIGGER CALLED');
+//             userTrigger({});
+//         }
+//     }, [appReady, token, userTrigger]);
+//
+//   console.log("userData", userData);
+//   console.log("userLoading", userLoading);
+//   console.log("userError", userError);
 
 
   if (!appReady) {

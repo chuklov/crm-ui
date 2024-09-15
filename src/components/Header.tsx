@@ -1,32 +1,30 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectCurrentToken } from '../api/authSlice';
-import { MapUser } from './User';
+import { useLazyUserInfoQuery } from '../api/authApiSlice';
 
 const Header: React.FC = () => {
   const token = useSelector(selectCurrentToken);
-  const [user, setUser] = React.useState<any>(null);
+  const [fetchUserInfo, { data: user, isLoading, isError }] = useLazyUserInfoQuery();
 
-  useEffect(() => {
-    // Fetch user details from backend API using token
-    if (token) {
-      fetch(`/users/user_info`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+useEffect(() => {
+  if (token) {
+    console.log('Fetching user info...');
+    fetchUserInfo(undefined).unwrap()
+      .then(response => {
+        console.log('User info fetched:', response);
       })
-      .then((response) => response.json())
-      .then((userData) => {
-        setUser(MapUser(userData)); // Map the user using MapUser
+      .catch(error => {
+        console.error('Error fetching user info:', error);
       });
-    }
-  }, [token]);
+  }
+}, [token, fetchUserInfo]);
 
   return (
     <header>
       <div className="header-left">CRM MD</div>
       <div className="header-right">
-        {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
+         {isLoading ? 'Loading...' : isError ? 'Error fetching user info' : user ? `${user.firstName} ${user.lastName}` : 'No user data'}
       </div>
     </header>
   );

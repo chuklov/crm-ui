@@ -1,3 +1,4 @@
+//  authSlice.ts
 import { createListenerMiddleware, createSlice } from "@reduxjs/toolkit";
 import Keycloak from "keycloak-js";
 
@@ -12,13 +13,16 @@ const authSlice = createSlice({
     reducers: {
         initialize: state => {},
         setCredentials: (state, action) => {
+            //console.log("set credentials is: ", action.payload);
             state.token = action.payload;
         },
         setKeycloak: (state, action) => {
+            //console.log("set keycloak is: ", action.payload);
             state.keycloak = action.payload;
             state.useKeycloak = true;
         },
         setAppReady: (state, action) => {
+            //console.log("set application ready is: ", action.payload);
             state.appReady = action.payload
         }
     }
@@ -44,6 +48,7 @@ const loginListenerMiddleware = createListenerMiddleware();
 loginListenerMiddleware.startListening({
     actionCreator: setCredentials,
     effect: async (action, listenerApi) => {
+        //console.log('middle ware: ', action.payload);
         localStorage.setItem('token', action.payload);
     }
 });
@@ -61,15 +66,25 @@ loginListenerMiddleware.startListening({
                 // @ts-ignore
                 clientId: window.env.keycloak.clientId
             });
-            const authenticated = await keycloak.init({});
+            //console.log('Keycloak is: ', keycloak);
+
+            const authenticated = await keycloak.init({
+                    onLoad: 'login-required',
+                    checkLoginIframe: false,
+                    });
+            console.log('Is authenticated?: ', authenticated);
             if (authenticated) {
+                console.log('User is authenticated');
                 listenerApi.dispatch(setKeycloak(keycloak));
                 listenerApi.dispatch(setCredentials(keycloak.token));
+                listenerApi.dispatch(setAppReady(true));
             } else {
+                console.log('User is NOT authenticated');
                 keycloak.login();
+                listenerApi.dispatch(setAppReady(false));
             }
         }
-        listenerApi.dispatch(setAppReady(true));
+
     }
 })
 
