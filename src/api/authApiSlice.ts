@@ -10,6 +10,16 @@ export const authApiSlice = apiSlice.injectEndpoints({
            query: () => '/users/user_info',
             transformResponse: (responseData: any) => {
                 console.log("auth slice responseData", responseData);
+                  if (!responseData || typeof responseData !== 'object') {
+                    throw new Error('Invalid response format');
+                  }
+                return MapUser(responseData);
+            }
+        }),
+        users: builder.query({
+           query: () => '/users',
+            transformResponse: (responseData: any) => {
+                console.log("get all users responseData", responseData);
                 return MapUser(responseData);
             }
         }),
@@ -18,5 +28,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-    useLazyUserInfoQuery
+    useLazyUserInfoQuery,
+    useLazyUsersQuery
 } = authApiSlice;

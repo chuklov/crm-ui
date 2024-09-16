@@ -1,24 +1,26 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectCurrentToken } from '../api/authSlice';
-import { useLazyUserInfoQuery } from '../api/authApiSlice';
+import { initialize, selectAppReady, selectCurrentToken } from '../api/authSlice';
+import { useLazyUserInfoQuery} from '../api/authApiSlice';
 
 const Header: React.FC = () => {
   const token = useSelector(selectCurrentToken);
-  const [fetchUserInfo, { data: user, isLoading, isError }] = useLazyUserInfoQuery();
+  const [userTrigger, {data: user, isLoading, isError }] = useLazyUserInfoQuery();
+  const appReady = useSelector(selectAppReady);
 
 useEffect(() => {
-  if (token) {
+  if (appReady && token) {
     console.log('Fetching user info...');
-    fetchUserInfo(undefined).unwrap()
+        userTrigger({})
       .then(response => {
         console.log('User info fetched:', response);
       })
       .catch(error => {
-        console.error('Error fetching user info:', error);
+        console.log('Error fetching user info:', error);
       });
   }
-}, [token, fetchUserInfo]);
+}, [token, userTrigger]);
+
 
   return (
     <header>

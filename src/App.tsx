@@ -23,16 +23,18 @@ const App: React.FC = () => {
         dispatch(initialize());
     }, [dispatch]);
 
-//     useEffect(() => {
-//         if (appReady && token) {
-//             console.log('USER TRIGGER CALLED');
-//             userTrigger({});
-//         }
-//     }, [appReady, token, userTrigger]);
-//
-//   console.log("userData", userData);
-//   console.log("userLoading", userLoading);
-//   console.log("userError", userError);
+    useEffect(() => {
+//             console.log('appReady:', appReady);
+//             console.log('token:', localStorage.getItem('token'));
+        if (appReady && token) {
+            console.log('USER TRIGGER CALLED');
+            userTrigger({});
+        }
+    }, [appReady, token, userTrigger]);
+
+  console.log("userData", userData);
+  console.log("userLoading", userLoading);
+  console.log("userError", userError);
 
 
   if (!appReady) {

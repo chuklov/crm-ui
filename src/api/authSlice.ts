@@ -72,7 +72,7 @@ loginListenerMiddleware.startListening({
                     onLoad: 'login-required',
                     checkLoginIframe: false,
                     });
-            console.log('Is authenticated?: ', authenticated);
+            //console.log('Is authenticated?: ', authenticated);
             if (authenticated) {
                 console.log('User is authenticated');
                 listenerApi.dispatch(setKeycloak(keycloak));

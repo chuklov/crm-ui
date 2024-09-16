@@ -13,8 +13,9 @@ const baseQuery = fetchBaseQuery({
     credentials: 'include',
     prepareHeaders: async (headers, { getState }) => {
         const state: any = getState();
+        //console.log('fetchBaseQuery');
         const token = state.auth.useKeycloak ? state.auth.keycloak.token : localStorage.getItem('token');
-
+        //console.log('fetch base query token: ', token);
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
@@ -27,7 +28,7 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
     let result = await baseQuery(args, api, extraOptions)
-
+    console.log('baseQueryWithReauth, arg: ', args);
     // @ts-ignore
     if (result?.error?.originalStatus === 403 || result?.error?.status === 401) {
         const state = api.getState();
